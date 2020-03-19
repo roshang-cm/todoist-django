@@ -29,7 +29,8 @@ class Section(models.Model):
 class Task(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.TextField(blank=False)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, blank=True, null=True)
     label = models.ForeignKey(
         Label, on_delete=models.SET_NULL, null=True, blank=True)
     due_date = models.DateTimeField(blank=True, null=True)

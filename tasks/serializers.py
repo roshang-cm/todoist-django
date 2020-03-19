@@ -6,3 +6,4 @@ class TaskSerializer(ModelSerializer):
     class Meta:
         model = Task
         fields = '__all__'
+        depth = 2
