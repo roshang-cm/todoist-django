@@ -9,7 +9,6 @@ isort==4.3.21
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
 pep8-naming==0.4.1
-pkg-resources==0.0.0
 prospector==1.2.0
 pycodestyle==2.4.0
 pydocstyle==5.0.2
