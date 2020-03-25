@@ -1,8 +1,9 @@
+from users.serializers import UserSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from tasks.models import Label, Project, Section, Task
 from users.models import User
-from tasks.serializers import TaskSerializer
+from tasks.serializers import TaskCreateSerializer, TaskSerializer
 from todoist.response import resolve_user_id_from_jwt, StandardResponse
 # Create your views here.
 
@@ -20,16 +21,16 @@ class TaskView(APIView):
     def post(self, request):
         try:
             user_id = resolve_user_id_from_jwt(request)
-            task_serializer = TaskSerializer(
+            task_serializer = TaskCreateSerializer(
                 data={**request.data.dict(), 'user': user_id})
             if not task_serializer.is_valid():
                 print(task_serializer.initial_data)
                 return StandardResponse(errors=task_serializer.errors)
             else:
-                task_id = request.data.get('task_id')
+                task_id = request.data.get('uuid')
                 if task_id:
                     try:
-                        task = Task.objects.get(pk=task_id)
+                        task = Task.objects.get(uuid=task_id)
                         project = task.project
                         label = task.label
                         section = task.section
@@ -65,3 +66,12 @@ class TaskView(APIView):
                 return StandardResponse(TaskSerializer(task).data)
         except Exception as e:
             return StandardResponse(errors=str(e))
+
+
+def latest_action(request):
+    try:
+        user_id = resolve_user_id_from_jwt(request)
+        recent_task = Task.objects.filter(user_id=user_id).latest()
+        return StandardResponse(recent_task.date_modified)
+    except Exception as e:
+        return StandardResponse(errors=str(e))

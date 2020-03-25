@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+import uuid
 # Create your models here.
 
 
@@ -27,6 +28,7 @@ class Section(models.Model):
 
 
 class Task(BaseModel):
+    uuid = models.UUIDField(default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.TextField(blank=False)
     project = models.ForeignKey(
@@ -41,3 +43,7 @@ class Task(BaseModel):
         "Task", on_delete=models.SET_NULL, blank=True, null=True)
     checked = models.BooleanField(default=False)
     order = models.IntegerField(default=0)
+    deleted = models.BooleanField(default=False)
+
+    class Meta:
+        get_latest_by = 'date_modified'

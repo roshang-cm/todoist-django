@@ -1,11 +1,11 @@
 from django.contrib.auth.hashers import check_password
 from todoist.response import StandardResponse, get_jwt_for_id
-from users.serializers import UserSerializer
+from users.serializers import UserCreateSerializer, UserSerializer
 from users.models import User
 
 
 def register(request):
-    user_data = UserSerializer(data=request.POST)
+    user_data = UserCreateSerializer(data=request.POST)
     data = None
     if user_data.is_valid():
         user = user_data.save()

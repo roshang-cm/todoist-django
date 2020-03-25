@@ -123,6 +123,9 @@ USE_TZ = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+DATETIME_FORMAT = 'c'
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
