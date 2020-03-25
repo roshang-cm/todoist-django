@@ -5,7 +5,7 @@ from users.models import User
 
 
 def register(request):
-    user_data = UserCreateSerializer(data=request.POST)
+    user_data = UserCreateSerializer(data=request.DATA)
     data = None
     if user_data.is_valid():
         user = user_data.save()
@@ -19,8 +19,8 @@ def register(request):
 
 
 def login(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
+    username = request.DATA.get('username')
+    password = request.DATA.get('password')
     if not username:
         return StandardResponse(errors='username missing')
     try:

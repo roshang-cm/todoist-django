@@ -36,7 +36,7 @@ class TaskView(APIView):
                         section = task.section
                         parent = task.parent
                         for field in ['project', 'label', 'section', 'parent']:
-                            form_data = request.POST.get(field)
+                            form_data = request.DATA.get(field)
                             if form_data:
                                 if field == 'project':
                                     project = Project.objects.get(pk=form_data)
@@ -46,18 +46,18 @@ class TaskView(APIView):
                                     section = Section.objects.get(pk=form_data)
                                 if field == 'parent':
                                     parent = Task.objects.get(pk=form_data)
-                        task.title = request.POST.get('title', task.title)
+                        task.title = request.DATA.get('title', task.title)
                         task.project = project
                         task.label = label
-                        task.due_date = request.POST.get(
+                        task.due_date = request.DATA.get(
                             'due_date', task.due_date)
-                        task.priority = request.POST.get(
+                        task.priority = request.DATA.get(
                             'priority', task.priority)
                         task.section = section
                         task.parent = parent
-                        task.checked = request.POST.get(
+                        task.checked = request.DATA.get(
                             'checked', task.checked)
-                        task.order = request.POST.get('order', task.order)
+                        task.order = request.DATA.get('order', task.order)
                         task.save()
                     except Exception as e:
                         return StandardResponse(errors=str(e))
