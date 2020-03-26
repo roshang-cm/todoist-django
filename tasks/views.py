@@ -22,9 +22,11 @@ class TaskView(APIView):
     def post(self, request):
         try:
             user_id = resolve_user_id_from_jwt(request)
-            request_data = request.POST
-            if request.body:
-                request_data = loads(request.body.decode('utf-8'))
+            request_data = request.body
+            if request_data:
+                request_data = loads(request_data.decode('utf-8'))
+            else:
+                request_data = request.POST
             task_serializer = TaskCreateSerializer(
                 data={**request_data.dict(), 'user': user_id})
             if not task_serializer.is_valid():
