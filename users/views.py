@@ -24,6 +24,7 @@ def register(request):
 
 def login(request):
     request_data = request.POST
+    print(request.body)
     if request.body:
         request_data = loads(request.body.decode('utf-8'))
     username = request_data.get('username')

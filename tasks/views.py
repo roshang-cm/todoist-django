@@ -22,54 +22,51 @@ class TaskView(APIView):
     def post(self, request):
         try:
             user_id = resolve_user_id_from_jwt(request)
-            request_data = request.body
-            if request_data:
-                request_data = loads(request_data.decode('utf-8'))
-            else:
-                request_data = request.POST
+            request_data = request.data
             task_serializer = TaskCreateSerializer(
-                data={**request_data.dict(), 'user': user_id})
+                data={**request_data, 'user': user_id})
             if not task_serializer.is_valid():
                 print(task_serializer.initial_data)
                 return StandardResponse(errors=task_serializer.errors)
             else:
-                task_id = request_data.get('uuid')
-                if task_id:
-                    try:
-                        task = Task.objects.get(uuid=task_id)
-                        project = task.project
-                        label = task.label
-                        section = task.section
-                        parent = task.parent
-                        for field in ['project', 'label', 'section', 'parent']:
-                            form_data = request_data.get(field)
-                            if form_data:
-                                if field == 'project':
-                                    project = Project.objects.get(pk=form_data)
-                                if field == 'label':
-                                    label = Label.objects.get(pk=form_data)
-                                if field == 'section':
-                                    section = Section.objects.get(pk=form_data)
-                                if field == 'parent':
-                                    parent = Task.objects.get(pk=form_data)
-                        task.title = request_data.get('title', task.title)
-                        task.project = project
-                        task.label = label
-                        task.due_date = request_data.get(
-                            'due_date', task.due_date)
-                        task.priority = request_data.get(
-                            'priority', task.priority)
-                        task.section = section
-                        task.parent = parent
-                        task.checked = request_data.get(
-                            'checked', task.checked)
-                        task.order = request_data.get('order', task.order)
-                        task.save()
-                    except Exception as e:
-                        return StandardResponse(errors=str(e))
-                else:
-                    task = task_serializer.save(user_id=user_id)
-                return StandardResponse(TaskSerializer(task).data)
+                task_id = request_data.get('uuid', None)
+                try:
+                    if not Task.objects.filter(uuid=task_id).exists():
+                        task = task_serializer.save(user_id=user_id)
+                        return StandardResponse(TaskSerializer(task).data)
+                    task = Task.objects.get(uuid=task_id)
+                    project = task.project
+                    label = task.label
+                    section = task.section
+                    parent = task.parent
+                    for field in ['project', 'label', 'section', 'parent']:
+                        form_data = request_data.get(field)
+                        if form_data:
+                            if field == 'project':
+                                project = Project.objects.get(pk=form_data)
+                            if field == 'label':
+                                label = Label.objects.get(pk=form_data)
+                            if field == 'section':
+                                section = Section.objects.get(pk=form_data)
+                            if field == 'parent':
+                                parent = Task.objects.get(pk=form_data)
+                    task.title = request_data.get('title', task.title)
+                    task.project = project
+                    task.label = label
+                    task.due_date = request_data.get(
+                        'due_date', task.due_date)
+                    task.priority = request_data.get(
+                        'priority', task.priority)
+                    task.section = section
+                    task.parent = parent
+                    task.checked = request_data.get(
+                        'checked', task.checked)
+                    task.order = request_data.get('order', task.order)
+                    task.save()
+                    return StandardResponse(TaskSerializer(task).data)
+                except Exception as e:
+                    return StandardResponse(errors=str(e))
+
         except Exception as e:
             return StandardResponse(errors=str(e))
 
