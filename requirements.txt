@@ -16,7 +16,7 @@ psycopg2==2.8.4
 pycodestyle==2.4.0
 pydocstyle==5.0.2
 pyflakes==2.1.1
-PyJWT==1.7.1
+PyJWT==2.4.0
 pylint==2.4.4
 pylint-celery==0.3
 pylint-django==2.0.12
